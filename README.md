@@ -113,3 +113,4 @@ The output of each fuzzing tool is different, but we log all the exceptions and 
 01-05 23:53:25.748  4858  4858 E ACRA    : 	at java.lang.reflect.Method.invoke(Native Method)
 ````
 
+Once the fuzzing is finished, one can search for the existence of a crash in the collected files with the script `scripts/check.sh`. This script accepts the directory path where the folders of fuzzing outputs are stored. 
