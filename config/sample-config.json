@@ -1,0 +1,18 @@
+
+{
+  "android_setting": {
+    "android_platform": "/home/maryam/Documents/Tool/Android-Testing-Tools/android-platforms/",
+    "android_callback_list": "/home/maryam/IdeaProjects/SootTutorial/files/AndroidCallbacks.txt",
+    "callback_typestates": "/home/maryam/IdeaProjects/SootTutorial/files/androidCallbackTypestate.xml"
+  },
+  "application_setting": {
+    "target_app": "AmazeFileManager-3.3.2-#1656.apk",
+    "target_package": "com.amaze.filemanager",
+    "target_class": "com.amaze.filemanager.utils.files.FileUtils",
+    "target_method": "<com.amaze.filemanager.utils.files.FileUtils: java.lang.String[] getPathsInPath(java.lang.String)>",
+    "target_line": "745"
+  },
+  "analysis_setting": {
+    "output_path": "/home/maryam/IdeaProjects/SootTutorial/output/"
+  }
+}
