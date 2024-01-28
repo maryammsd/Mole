@@ -6,13 +6,66 @@ To set Mole, you need to install Java version 1.8. You can get Java version 1.8 
 You need to download the Android platforms and locate them in a directory. It is available at [android-platforms](https://github.com/Sable/android-platforms). 
 
 ## Attribute-sensitive Reachability Analysis (ASRA)
-To perform ASRA, you can use the file [mole.jar](). To start the analysis, a config file is essential to define the locations where 
-- Android platforms are located
-- the file , including the set of callback functions in the Android framework
-- the file , including all the attribute states
-- the file , including
-are explicitly defined. In this file, the crash point is defined by specifying the package, class, function signature and the line number of the last call in the application in the crash stack trace.
-The application package kit is also declared in this file. 
+To perform ASRA, you can use the file [mole.jar](). To start the analysis, a config file is essential for the setup of our analysis. In this file,
+- `android_platform` is the path to Android platforms jar files. 
+- `android_callback_list` is the path of the file, including the set of callback functions in the Android framework (e.g., the file AndroidCallbacks.txt in FlowDroid).
+- `output_path` is the output folder.
+- `target_app` is the name of the target application to analyze. This file should be added under a folder named ./demo/IntervalAnalysis.  
+- `target_package` is the package of the application
+- `target_class` is the name of the class where the last function in the application calls stack in the crash stack trace.
+- `target_method` is the function signature where the last function in the application calls stack in the crash stack trace.
+- `target_line` is the line number of the crash point available in the crash stack trace.
+
+An example of a config file for the crash with issue ID 4707 in AnkiDroid app is shown below:
+````
+{
+	"android_setting": {
+    "android_platform": "/home/maryam/Documents/Tool/Android-Testing-Tools/android-platforms/",
+    "android_callback_list": "/home/maryam/IdeaProjects/SootTutorial/files/AndroidCallbacks.txt",
+    "callback_typestates": "/home/maryam/IdeaProjects/SootTutorial/files/androidCallbackTypestate.xml"
+ 	 },
+    "application_setting": { 
+      "target_app": "AnkiDroid-2.9alpha4-4707.apk",
+      "target_package": "com.ichi2",
+      "target_class": "com.ichi2.anki.AnkiActivity",
+      "target_method": "<com.ichi2.anki.AnkiActivity: void startActivityForResult(android.content.Intent,int)>",
+      "target_line": "175"
+    },
+    "analysis_setting": {
+      "output_path": "/home/maryam/IdeaProjects/SootTutorial/output/revision/"
+    }
+  }
+
+````
+The example crash stack trace is given below:
+````
+ FATAL EXCEPTION: main
+ Process: com.ichi2.anki, PID: 7186
+ android.os.FileUriExposedException: file:///storage/emulated/0/Pictures/img_202006211308531497856152.jpg exposed beyond app through ClipData.Item.getUri()
+ 	at android.os.StrictMode.onFileUriExposed(StrictMode.java:1799)
+ 	at android.net.Uri.checkFileUriExposed(Uri.java:2346)
+ 	at android.content.ClipData.prepareToLeaveProcess(ClipData.java:845)
+ 	at android.content.Intent.prepareToLeaveProcess(Intent.java:8941)
+ 	at android.content.Intent.prepareToLeaveProcess(Intent.java:8926)
+ 	at android.app.Instrumentation.execStartActivity(Instrumentation.java:1517)
+ 	at android.app.Activity.startActivityForResult(Activity.java:4225)
+ 	at android.support.v4.app.BaseFragmentActivityJB.startActivityForResult(BaseFragmentActivityJB.java:50)
+ 	at android.support.v4.app.FragmentActivity.startActivityForResult(FragmentActivity.java:79)
+ 	at android.app.Activity.startActivityForResult(Activity.java:4183)
+ 	at android.support.v4.app.FragmentActivity.startActivityForResult(FragmentActivity.java:859)
+ 	at com.ichi2.anki.AnkiActivity.startActivityForResult(AnkiActivity.java:175)
+ 	at com.ichi2.anki.multimediacard.fields.BasicImageFieldController$2.onClick(BasicImageFieldController.java:125)
+ 	at android.view.View.performClick(View.java:5637)
+ 	at android.view.View$PerformClick.run(View.java:22429)
+ 	at android.os.Handler.handleCallback(Handler.java:751)
+ 	at android.os.Handler.dispatchMessage(Handler.java:95)
+ 	at android.os.Looper.loop(Looper.java:154)
+ 	at android.app.ActivityThread.main(ActivityThread.java:6119)
+ 	at java.lang.reflect.Method.invoke(Native Method)
+ 	at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:886)
+ 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:776)
+````
+When the config file is set, one can use `java` to run the `mole.jar` to start the analysis given the config file and by setting the type of the analysis and callgraph construction algorithm as shown below:
 ````
 java -jar mole.jar -f <config-file> -ca <callgraph algorithm> -type <baseline/reach/event> -t <callgraph construction timeout>
 ````
@@ -24,9 +77,11 @@ Here,
   - performing reachability analysis (reach),
   - performing attribute-sensitive reachability analysis (event)
 - `-t`: add the timeout for callgraph construction performed by flowdroid.
+
 Consider that the `jar` file should be located in a folder where config and output folders reside in it. When the analysis is finished, the instrumented `apk` file is saved under the folder `./output/instrument/`.
+
 ## Fuzzing Tool Setup
-The fuzzing tools are all available in a docker file that is extended from the docker provided by Themis. In this docker, we add all the fuzzing tools under the path . To run each fuzzing tool, one can use the themis.py to start an analysis:
+The fuzzing tools are all available in a docker file available at this [link](). This file is extended from the docker provided by Themis and includes the fuzzing tools Monkey, Ape, Stoat, and FastBot2. In this docker, we add all the fuzzing tools under the path `/home/Themis`. To run each fuzzing tool, one can use the themis.py to start the analysis. For more information about how to use this script, you can check [Themis](https://github.com/the-themis-benchmarks/home).
 
 ## Output Result
 The output of each fuzzing tool is different, but we log all the exceptions and information about the type of the event (necessary/irrelevant) in a file called "logcat.log". In this file, each line indicates the time, start or end of the callback called, class, and callback name. Below is a sample and part of it: 
