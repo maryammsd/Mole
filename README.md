@@ -6,7 +6,7 @@ To set Mole, you need to install Java version 1.8. You can get Java version 1.8 
 You need to download the Android platforms and locate them in a directory. It is available at [android-platforms](https://github.com/Sable/android-platforms). 
 
 ## Attribute-sensitive Reachability Analysis (ASRA)
-To perform ASRA, you can use the file [mole.jar](https://hkustconnect-my.sharepoint.com/:u:/g/personal/mamt_connect_ust_hk/EW7Tm5hHPedDvoWQP3YrAc4BUcOoFH7stDUhBDoyTiFAFg?e=Q8zfkL). To start the analysis, a config file is essential for the setup of our analysis. In this file,
+To perform ASRA, you can use the file [mole.jar](https://hkustconnect-my.sharepoint.com/:f:/g/personal/mamt_connect_ust_hk/EtUpYqtvhrtJnlPH_zwuGxcBG2muF2BS7rN49dYdw6h50Q?e=Fbimep). To start the analysis, a config file is essential for the setup of our analysis. In this file,
 - `android_platform` is the path to Android platforms jar files. 
 - `android_callback_list` is the path of the file, including the set of callback functions in the Android framework (e.g., the file AndroidCallbacks.txt in FlowDroid).
 - `output_path` is the output folder.
