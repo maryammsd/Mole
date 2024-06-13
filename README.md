@@ -83,6 +83,9 @@ Consider that the `jar` file should be located in a folder where config and outp
 ## Fuzzing Tool Setup
 The fuzzing tools are all available in a docker file available at this [link](). This file is extended from the docker provided by Themis and includes the fuzzing tools Monkey, Ape, Stoat, and FastBot2. In this docker, we add all the fuzzing tools under the path `/home/Themis`. To run each fuzzing tool, one can use the themis.py to start the analysis. For more information about how to use this script, you can check [Themis](https://github.com/the-themis-benchmarks/home).
 
+
+## Running the Fuzzing Tools in Docker 
+
 ## Output Result
 The output of each fuzzing tool is different, but we log all the exceptions and information about the type of the event (necessary/irrelevant) in a file called "logcat.log". In this file, each line indicates the time, start or end of the callback called, class, and callback name. Below is a sample and part of it: 
 
@@ -113,4 +116,5 @@ The output of each fuzzing tool is different, but we log all the exceptions and 
 01-05 23:53:25.748  4858  4858 E ACRA    : 	at java.lang.reflect.Method.invoke(Native Method)
 ````
 
-Once the fuzzing is finished, one can search for the existence of a crash in the collected files with the script `scripts/check.sh`. This script accepts the directory path where the folders of fuzzing outputs are stored. 
+Once the fuzzing is finished, the script `scripts/check.sh` can be used to search for a crash in the collected files. This script accepts the directory path where the folders of fuzzing outputs are stored. 
+The log files of the fuzzing tools used in our research (Monkey, Ape, Stoat, and FastBot2) are all available in this [link](https://hkustconnect-my.sharepoint.com/:u:/g/personal/mamt_connect_ust_hk/EcaM0uwNAjRNtKaLtpFjnfYBkfwTmy_vVWtYNpp0AnvNFA?e=9SDDAF). In these files, you can find information about the events generated in the fuzzing process for different runs in our evaluation phase. 
