@@ -16,7 +16,7 @@ To perform ASRA, you can use the file [mole.jar](https://hkustconnect-my.sharepo
 - `target_method` is the function signature where the last function in the application calls stack in the crash stack trace.
 - `target_line` is the line number of the crash point available in the crash stack trace.
 
-An example of a config file for the crash with issue ID 4707 in AnkiDroid app is shown below:
+An example of a config file for the crash with issue ID 4707 in the AnkiDroid app is shown below:
 ````
 {
 	"android_setting": {
@@ -78,13 +78,11 @@ Here,
   - performing attribute-sensitive reachability analysis (event)
 - `-t`: add the timeout for callgraph construction performed by flowdroid.
 
-Consider that the `jar` file should be located in a folder where config and output folders reside in it. When the analysis is finished, the instrumented `apk` file is saved under the folder `./output/instrument/`.
+Consider that the `jar` file should be located in a folder where the config and output folders reside. When the analysis is finished, the instrumented `apk` file is saved under the folder `./output/instrument/`.
 
 ## Fuzzing Tool Setup
-The fuzzing tools are all available in a docker file available at this [link](). This file is extended from the docker provided by Themis and includes the fuzzing tools Monkey, Ape, Stoat, and FastBot2. In this docker, we add all the fuzzing tools under the path `/home/Themis`. To run each fuzzing tool, one can use the themis.py to start the analysis. For more information about how to use this script, you can check [Themis](https://github.com/the-themis-benchmarks/home).
+The fuzzing tools are all available in a docker file available at this [link](https://hkustconnect-my.sharepoint.com/:u:/g/personal/mamt_connect_ust_hk/Eeb9jDXM4iFDoh5OJIo2h94BDTz7Gg80ukKM4HNWMFQ19Q?e=gJWZu0). This file is extended from the docker provided by Themis and includes the fuzzing tools Monkey, Ape, Stoat, and FastBot2. In this docker, we add all the fuzzing tools under the path `/home/Themis`. To run each fuzzing tool, one can use the themis.py to start the analysis. For more information about how to use this script, you can check [Themis](https://github.com/the-themis-benchmarks/home).
 
-
-## Running the Fuzzing Tools in Docker 
 
 ## Output Result
 The output of each fuzzing tool is different, but we log all the exceptions and information about the type of the event (necessary/irrelevant) in a file called "logcat.log". In this file, each line indicates the time, start or end of the callback called, class, and callback name. Below is a sample and part of it: 
@@ -117,4 +115,4 @@ The output of each fuzzing tool is different, but we log all the exceptions and 
 ````
 
 Once the fuzzing is finished, the script `scripts/check.sh` can be used to search for a crash in the collected files. This script accepts the directory path where the folders of fuzzing outputs are stored. 
-The log files of the fuzzing tools used in our research (Monkey, Ape, Stoat, and FastBot2) are all available in this [link](https://hkustconnect-my.sharepoint.com/:u:/g/personal/mamt_connect_ust_hk/EcaM0uwNAjRNtKaLtpFjnfYBkfwTmy_vVWtYNpp0AnvNFA?e=9SDDAF). In these files, you can find information about the events generated in the fuzzing process for different runs in our evaluation phase. 
+The log files of the fuzzing tools used in our research (Monkey, Ape, Stoat, and FastBot2) are all available in this [link](https://hkustconnect-my.sharepoint.com/:u:/g/personal/mamt_connect_ust_hk/EcaM0uwNAjRNtKaLtpFjnfYBkfwTmy_vVWtYNpp0AnvNFA?e=9SDDAF). These files contain information about the events generated in the fuzzing process for different runs in our evaluation phase. 
