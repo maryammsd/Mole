@@ -1,9 +1,37 @@
 ## Introduction
-Mole is a static analysis tool that aims to find precise sets of reachable paths to a crash point. 
-
+Mole is a static analysis tool that aims to find precise sets of reachable paths to trigger a crash concerning the widget dependencies based on their visual attributes. Developers leverage widget attributes (e.g., visibility, focused, etc.) to impose relative functional or visual dependencies between widgets. These dependencies can help us to identify relevant and irrelevant widgets in reachable paths to a crash point when we have access to an app's bytecode. Mole performs an Attribute-Sensitive Reachability Analysis (ASRA) to find these paths by having access to the crash stack trace of a crash. A crash stack trace is a common resource that includes information about the exception type, message, and call stack of a crash. An example of a crash stack trace is given below:
+````
+ FATAL EXCEPTION: main
+ Process: com.ichi2.anki, PID: 7186
+ android.os.FileUriExposedException: file:///storage/emulated/0/Pictures/img_202006211308531497856152.jpg exposed beyond app through ClipData.Item.getUri()
+ 	at android.os.StrictMode.onFileUriExposed(StrictMode.java:1799)
+ 	at android.net.Uri.checkFileUriExposed(Uri.java:2346)
+ 	at android.content.ClipData.prepareToLeaveProcess(ClipData.java:845)
+ 	at android.content.Intent.prepareToLeaveProcess(Intent.java:8941)
+ 	at android.content.Intent.prepareToLeaveProcess(Intent.java:8926)
+ 	at android.app.Instrumentation.execStartActivity(Instrumentation.java:1517)
+ 	at android.app.Activity.startActivityForResult(Activity.java:4225)
+ 	at android.support.v4.app.BaseFragmentActivityJB.startActivityForResult(BaseFragmentActivityJB.java:50)
+ 	at android.support.v4.app.FragmentActivity.startActivityForResult(FragmentActivity.java:79)
+ 	at android.app.Activity.startActivityForResult(Activity.java:4183)
+ 	at android.support.v4.app.FragmentActivity.startActivityForResult(FragmentActivity.java:859)
+ 	at com.ichi2.anki.AnkiActivity.startActivityForResult(AnkiActivity.java:175)
+ 	at com.ichi2.anki.multimediacard.fields.BasicImageFieldController$2.onClick(BasicImageFieldController.java:125)
+ 	at android.view.View.performClick(View.java:5637)
+ 	at android.view.View$PerformClick.run(View.java:22429)
+ 	at android.os.Handler.handleCallback(Handler.java:751)
+ 	at android.os.Handler.dispatchMessage(Handler.java:95)
+ 	at android.os.Looper.loop(Looper.java:154)
+ 	at android.app.ActivityThread.main(ActivityThread.java:6119)
+ 	at java.lang.reflect.Method.invoke(Native Method)
+ 	at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:886)
+ 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:776)
+````
+Once the feasible paths and widget attribute dependencies are found, one can categorize an app's widgets and events into two groups: necessary and irrelevant to trigger a crash. With instrumentation, we intend to disable irrelevant widgets at run time. Hence, we can leverage fuzzing tools to explore the shrunk widget/event input space dynamically, looking for the crash. 
 ## Environment Setting
-To set Mole, you need to install Java version 1.8. You can get Java version 1.8 with [sdkman](https://sdkman.io/).
-You need to download the Android platforms and locate them in a directory. It is available at [android-platforms](https://github.com/Sable/android-platforms). 
+To set Mole, you need to  
+- install Java version 1.8.
+- download the [Android platforms](https://github.com/Sable/android-platforms). 
 
 ## Attribute-sensitive Reachability Analysis (ASRA)
 To perform ASRA, you can use the file [mole.jar](https://hkustconnect-my.sharepoint.com/:f:/g/personal/mamt_connect_ust_hk/EtUpYqtvhrtJnlPH_zwuGxcBG2muF2BS7rN49dYdw6h50Q?e=Fbimep). To start the analysis, a config file is essential for the setup of our analysis. In this file,
@@ -37,34 +65,17 @@ An example of a config file for the crash with issue ID 4707 in the AnkiDroid ap
   }
 
 ````
-The example crash stack trace is given below:
-````
- FATAL EXCEPTION: main
- Process: com.ichi2.anki, PID: 7186
- android.os.FileUriExposedException: file:///storage/emulated/0/Pictures/img_202006211308531497856152.jpg exposed beyond app through ClipData.Item.getUri()
- 	at android.os.StrictMode.onFileUriExposed(StrictMode.java:1799)
- 	at android.net.Uri.checkFileUriExposed(Uri.java:2346)
- 	at android.content.ClipData.prepareToLeaveProcess(ClipData.java:845)
- 	at android.content.Intent.prepareToLeaveProcess(Intent.java:8941)
- 	at android.content.Intent.prepareToLeaveProcess(Intent.java:8926)
- 	at android.app.Instrumentation.execStartActivity(Instrumentation.java:1517)
- 	at android.app.Activity.startActivityForResult(Activity.java:4225)
- 	at android.support.v4.app.BaseFragmentActivityJB.startActivityForResult(BaseFragmentActivityJB.java:50)
- 	at android.support.v4.app.FragmentActivity.startActivityForResult(FragmentActivity.java:79)
- 	at android.app.Activity.startActivityForResult(Activity.java:4183)
- 	at android.support.v4.app.FragmentActivity.startActivityForResult(FragmentActivity.java:859)
- 	at com.ichi2.anki.AnkiActivity.startActivityForResult(AnkiActivity.java:175)
- 	at com.ichi2.anki.multimediacard.fields.BasicImageFieldController$2.onClick(BasicImageFieldController.java:125)
- 	at android.view.View.performClick(View.java:5637)
- 	at android.view.View$PerformClick.run(View.java:22429)
- 	at android.os.Handler.handleCallback(Handler.java:751)
- 	at android.os.Handler.dispatchMessage(Handler.java:95)
- 	at android.os.Looper.loop(Looper.java:154)
- 	at android.app.ActivityThread.main(ActivityThread.java:6119)
- 	at java.lang.reflect.Method.invoke(Native Method)
- 	at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:886)
- 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:776)
-````
+To successfully run Mole, you must set the configuration file specifying:
+- `android-platform`: the path to different versions of android jar files.
+- `android_callback_list`: the path to the list of callback files for performing the static analysis with FlowDroid.
+- `callback_typestates`: the path to the file containing the list of setting/accessing API functions corresponding to attributes. 
+- `target_app`: the name of the target app used for analysis.
+- `target_package`: name of the package in the app where the crash is located.
+- `target_class`: name of the class where the crash point resides.
+- `target_method`: name of the method consisting of the crash point.
+- `taregt_line`: line of the statement containing the crash point.
+- `output_path`: path to the location for saving the output of ASRA.
+
 When the config file is set, one can use `java` to run the `mole.jar` to start the analysis given the config file and by setting the type of the analysis and callgraph construction algorithm as shown below:
 ````
 java -jar mole.jar -f <config-file> -ca <callgraph algorithm> -type <baseline/reach/event> -t <callgraph construction timeout>
@@ -81,7 +92,33 @@ Here,
 Consider that the `jar` file should be located in a folder where the config and output folders reside. When the analysis is finished, the instrumented `apk` file is saved under the folder `./output/instrument/`.
 
 ## Fuzzing Tool Setup
-The fuzzing tools are all available in a docker file available at this [link](https://hkustconnect-my.sharepoint.com/:u:/g/personal/mamt_connect_ust_hk/Eeb9jDXM4iFDoh5OJIo2h94BDTz7Gg80ukKM4HNWMFQ19Q?e=gJWZu0). This file is extended from the docker provided by Themis and includes the fuzzing tools Monkey, Ape, Stoat, and FastBot2. In this docker, we add all the fuzzing tools under the path `/home/Themis`. To run each fuzzing tool, one can use the themis.py to start the analysis. For more information about how to use this script, you can check [Themis](https://github.com/the-themis-benchmarks/home).
+We used an Android emulator and installed the instrumented apk in it for the fuzzing process. We provide a docker file including,
+- android emulator
+- a set of fuzzing tools (Monkey, Ape, Stoat, and FastBot2)
+available in this [link](https://hkustconnect-my.sharepoint.com/:u:/g/personal/mamt_connect_ust_hk/Eeb9jDXM4iFDoh5OJIo2h94BDTz7Gg80ukKM4HNWMFQ19Q?e=gJWZu0).
+To start a fuzzing process with this docker, you can run `scripts/run-themis.sh` to create `n` instances of the docker.
+Before that, you have to locate the instrumented apks in the folder `` in the docker and save them by using the following commands:
+````
+./run-themis.sh <fuzzing-tool-name> <path-to-target-apps> <n>
+````
+in which,
+- `fuzzing-tool-name` refers to the name of a fuzzing tool, which can be any of `monkey,` `ape,` `stoat,` or `fastbot2`.
+- `path-to-target-apps` is the path to the list of target apps' apk files to perform `n` fuzzing process for each simultaneously. 
+- `n` is the number of fuzzing processes for each app in the target app directory.
+
+Please note that you must add the instrumented apk files in the docker beforehand. To do so, you need to run the docker:
+````
+docker run -it <docker-image-name>
+````
+and transfer the list of instrumented apk files to the docker with `scp`:
+````
+docker-image-name: scp host@domain:path-to-apk-list /home/Mole/apps/instrument-event/
+````
+Then, exit the docker and save the changes to it by running the following command:
+````
+docker commit <docker-id> <docker-image-name>
+````
+If you want to use other GUI fuzzing tools, you can check [Themis repository](https://github.com/the-themis-benchmarks/home) and modify the docker by adding other tools.
 
 
 ## Output Result
@@ -115,4 +152,8 @@ The output of each fuzzing tool is different, but we log all the exceptions and 
 ````
 
 Once the fuzzing is finished, the script `scripts/check.sh` can be used to search for a crash in the collected files. This script accepts the directory path where the folders of fuzzing outputs are stored. 
-The log files of the fuzzing tools used in our research (Monkey, Ape, Stoat, and FastBot2) are all available in this [link](https://hkustconnect-my.sharepoint.com/:u:/g/personal/mamt_connect_ust_hk/EcaM0uwNAjRNtKaLtpFjnfYBkfwTmy_vVWtYNpp0AnvNFA?e=9SDDAF). These files contain information about the events generated in the fuzzing process for different runs in our evaluation phase. 
+````
+check.sh <target-directory>
+````
+where `target-directory` consists of the directories of the results of fuzzing tools. By running this script, you can find the log of executed callbacks by fuzzing tools in `found.log` file under the directory for each crash. 
+The log files of the fuzzing tools used in our research (Monkey, Ape, Stoat, and FastBot2) are all available in this [link](https://hkustconnect-my.sharepoint.com/:u:/g/personal/mamt_connect_ust_hk/EcaM0uwNAjRNtKaLtpFjnfYBkfwTmy_vVWtYNpp0AnvNFA?e=9SDDAF). These files contain information about the events generated in the fuzzing process for different runs in our evaluation phase. Please note that to be able to interpret these log files, you can refer to the corresponding tools papers. 
