@@ -76,7 +76,8 @@ In this file,
 - `target_method` is the function signature where the last function in the application calls stack in the crash stack trace.
 - `target_line` is the line number of the crash point available in the crash stack trace.
 
-
+> [!NOTE]
+> We have made the android callback list and GUI attribute API specification in `FlowDroid/AndroidCallbacks.txt` and `FlowDroid/GUI_STATE_API.csv` respectively. 
 
 When the config file is prepared, you must save it under the same directory with `mole.jar` structured as follows:
  ````
