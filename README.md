@@ -78,14 +78,16 @@ In this file,
 
 
 
-When the config file is prepared, you must save it under the same directory with `mole.jar`:
+When the config file is prepared, you must save it under the same directory with `mole.jar` structured as follows:
+ ````
  Mole
        |
        |--- mole.jar
        |--- config.json
        |--- output
            | 
-
+	   
+````
 Then, you can use `java` to run the `mole.jar` to start the analysis, giving the path to the config file, setting the type of the analysis and callgraph construction algorithm as shown below:
 
 
@@ -169,15 +171,15 @@ When the fuzzing process is finished, you can find the output in the docker unde
 01-05 23:53:25.748  4858  4858 E ACRA    : 	at android.app.ActivityThread.main(ActivityThread.java:6119)
 01-05 23:53:25.748  4858  4858 E ACRA    : 	at java.lang.reflect.Method.invoke(Native Method)
 ````
-### Is Crash Reproduced?
+### Is the Crash Reproduced?
 Once the fuzzing is finished, you can use the script `scripts/check.sh` to search for a crash in the collected files. This script accepts the directory path where the folders of fuzzing outputs are stored. 
 ````
 check.sh `/home/output/`
 ````
 where `/home/output/` consists of the directories of the results of the fuzzing tool. By running this script, you get the crash reproduction time and the following output files if the crash is reproduced:
-- `found.log` having the trace of all the callbacks before the occurrence of the crash.
-- `irrelevant.txt` containing the trace of irrelevant callbacks before the occurrence of the crash.
-- `necessary.txt` consisting of the trace of necessary callbacks before the occurrence of the crash.
+- `found.log` has a trace of all the callbacks before the crash.
+- `irrelevant.txt` contains a trace of irrelevant callbacks before the crash occurred.
+- `necessary.txt` consists of the necessary callbacks trace before the occurrence of the crash.
 
 We have made available all the log files of our evaluation in this [link](https://hkustconnect-my.sharepoint.com/:u:/g/personal/mamt_connect_ust_hk/EcaM0uwNAjRNtKaLtpFjnfYBiUym7EUaL_0aC20mj9dcyA?e=OSgDQT), which is around 280 GB after decompressing the zip file. 
 
