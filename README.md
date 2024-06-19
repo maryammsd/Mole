@@ -1,3 +1,5 @@
+<img src="./mole.jpg" width=13% height=50%>
+
 ## Introduction
 Mole is a static analysis tool that aims to find __precise__ sets of __reachable paths__ to trigger a crash concerning the __widget dependencies__ based on their visual attributes. Developers leverage widget attributes (e.g., visibility, focused, etc.) to impose relative _functional_ or _visual_ dependencies between widgets. These dependencies can help us to identify _relevant_ and _irrelevant_ widgets in reachable paths to a crash point when we have access to an app's bytecode. Mole performs an **Attribute-Sensitive Reachability Analysis (ASRA)** to find these paths by having access to the crash stack trace of a crash. A *crash stack trace* is a common resource consisting of the exception type, exception message, and the framework and app-level call stack. An example of a crash stack trace is given below:
 
