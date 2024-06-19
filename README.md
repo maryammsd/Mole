@@ -169,12 +169,18 @@ When the fuzzing process is finished, you can find the output in the docker unde
 01-05 23:53:25.748  4858  4858 E ACRA    : 	at android.app.ActivityThread.main(ActivityThread.java:6119)
 01-05 23:53:25.748  4858  4858 E ACRA    : 	at java.lang.reflect.Method.invoke(Native Method)
 ````
-
-Apart from this file, each fuzzing tool collects information about the generated input events and models they construct (statically or dynamically). 
-
-Once the fuzzing is finished, the script `scripts/check.sh` can be used to search for a crash in the collected files. This script accepts the directory path where the folders of fuzzing outputs are stored. 
+### Is Crash Reproduced?
+Once the fuzzing is finished, you can use the script `scripts/check.sh` to search for a crash in the collected files. This script accepts the directory path where the folders of fuzzing outputs are stored. 
 ````
-check.sh <target-directory>
+check.sh `/home/output/`
 ````
-where `target-directory` consists of the directories of the results of fuzzing tools. By running this script, you can find the log of executed callbacks by fuzzing tools in `found.log` file under the directory for each crash. 
-The log files of the fuzzing tools used in our research (Monkey, Ape, Stoat, and FastBot2) are all available in this [link](https://hkustconnect-my.sharepoint.com/:u:/g/personal/mamt_connect_ust_hk/EcaM0uwNAjRNtKaLtpFjnfYBkfwTmy_vVWtYNpp0AnvNFA?e=9SDDAF). These files contain information about the events generated in the fuzzing process for different runs in our evaluation phase. Please note that to be able to interpret these log files, you can refer to the corresponding tools papers. 
+where `/home/output/` consists of the directories of the results of the fuzzing tool. By running this script, you get the crash reproduction time and the following output files if the crash is reproduced:
+- `found.log` having the trace of all the callbacks before the occurrence of the crash.
+- `irrelevant.txt` containing the trace of irrelevant callbacks before the occurrence of the crash.
+- `necessary.txt` consisting of the trace of necessary callbacks before the occurrence of the crash.
+
+We have made available all the log files of our evaluation in this [link](https://hkustconnect-my.sharepoint.com/:u:/g/personal/mamt_connect_ust_hk/EcaM0uwNAjRNtKaLtpFjnfYBiUym7EUaL_0aC20mj9dcyA?e=OSgDQT), which is around 280 GB after decompressing the zip file. 
+
+### Event Generated and GUI Models Constructed by Fuzzing Tools
+In addition to `logcat.log`, each fuzzing tool collects information about the generated input events and models it constructs (statically or dynamically). For instance, Monkey logs the coordination, generating an event with the event type in `monkey.log` for each app. For other fuzzing tools, please get more information from their repositories or websites available at [Ape](https://github.com/tianxiaogu/ape), [Stoat](https://tingsu.github.io/files/stoat.html), and [FastBot2](https://github.com/bytedance/Fastbot_Android).
+
