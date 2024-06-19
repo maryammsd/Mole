@@ -133,12 +133,15 @@ in which,
 - `path-to-target-apps` is the path to the list of target apps' apk files to perform `n` fuzzing process for each simultaneously. Please note that you have already added these files to the docker.
 - `n` is the number of fuzzing processes for each app in the target app directory.
 
+>[!NOTE]
+> Please note that you can change the fuzzing duration in `run-themis.sh` at the line by modifying the value in front of `--time` and adding duration in the format `number[m/h].` m and h refer to minutes and hours measures. 
+
 
 If you want to use other GUI fuzzing tools, you can check [Themis repository](https://github.com/the-themis-benchmarks/home) and modify the docker by adding other tools.
 
 
 ## Crash Reproduction Result
-When the fuzzing process is finished, you can find the output in the docker. We log all the exceptions and information about the type of the event (necessary/irrelevant) in a file called `logcat.log.` In this file, each line starts with the *time* and declares the *start* or *end* of a callback execution. It contains the name of the class and callback function. Below is a sample part of a log file we collect: 
+When the fuzzing process is finished, you can find the output in the docker under `/home/output/` folder. For each app, there is a directory named similar to the app file name. We log all the exceptions and information about the type of event (necessary/irrelevant) in a file called `logcat.log` under this folder. In this file, each line starts with the *time* and declares the *start* or *end* of a callback execution. It contains the name of the class and callback function. Below is a sample part of a log file we collect: 
 
 ````
 01-05 23:53:24.123  4858  4858 I <FUZZING>: start necessary: access$100 com.ichi2.anki.NavigationDrawerActivity
