@@ -1,5 +1,6 @@
 ## Introduction
-Mole is a static analysis tool that aims to find precise sets of reachable paths to trigger a crash concerning the widget dependencies based on their visual attributes. Developers leverage widget attributes (e.g., visibility, focused, etc.) to impose relative functional or visual dependencies between widgets. These dependencies can help us to identify relevant and irrelevant widgets in reachable paths to a crash point when we have access to an app's bytecode. Mole performs an Attribute-Sensitive Reachability Analysis (ASRA) to find these paths by having access to the crash stack trace of a crash. A crash stack trace is a common resource that includes information about the exception type, message, and call stack of a crash. An example of a crash stack trace is given below:
+Mole is a static analysis tool that aims to find __precise__ sets of __reachable paths__ to trigger a crash concerning the __widget dependencies__ based on their visual attributes. Developers leverage widget attributes (e.g., visibility, focused, etc.) to impose relative _functional_ or _visual_ dependencies between widgets. These dependencies can help us to identify _relevant_ and _irrelevant_ widgets in reachable paths to a crash point when we have access to an app's bytecode. Mole performs an **Attribute-Sensitive Reachability Analysis (ASRA)** to find these paths by having access to the crash stack trace of a crash. A *crash stack trace* is a common resource consisting of the exception type, exception message, and the framework and app-level call stack. An example of a crash stack trace is given below:
+
 ````
  FATAL EXCEPTION: main
  Process: com.ichi2.anki, PID: 7186
@@ -27,24 +28,23 @@ Mole is a static analysis tool that aims to find precise sets of reachable paths
  	at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:886)
  	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:776)
 ````
-Once the feasible paths and widget attribute dependencies are found, one can categorize an app's widgets and events into two groups: necessary and irrelevant to trigger a crash. With instrumentation, we intend to disable irrelevant widgets at run time. Hence, we can leverage fuzzing tools to explore the shrunk widget/event input space dynamically, looking for the crash. 
+Once the reachable paths and the widget attribute dependencies in them are found, one can categorize an app's widgets and events into two groups: 
+- necessary and
+- irrelevant
+
+to trigger a crash.
+With instrumentation, we intend to *disable* irrelevant widgets at run time. Thereafter, we can leverage fuzzing tools to explore the shrunk widget/event input space dynamically, exploring the crash. 
+
 ## Environment Setting
 To set Mole, you need to  
 - install Java version 1.8.
 - download the [Android platforms](https://github.com/Sable/android-platforms). 
 
-## Attribute-sensitive Reachability Analysis (ASRA)
-To perform ASRA, you can use the file [mole.jar](https://hkustconnect-my.sharepoint.com/:f:/g/personal/mamt_connect_ust_hk/EtUpYqtvhrtJnlPH_zwuGxcBG2muF2BS7rN49dYdw6h50Q?e=Fbimep). To start the analysis, a config file is essential for the setup of our analysis. In this file,
-- `android_platform` is the path to Android platforms jar files. 
-- `android_callback_list` is the path of the file, including the set of callback functions in the Android framework (e.g., the file AndroidCallbacks.txt in FlowDroid).
-- `output_path` is the output folder.
-- `target_app` is the name of the target application to analyze. This file should be added under a folder named ./demo/IntervalAnalysis.  
-- `target_package` is the package of the application
-- `target_class` is the name of the class where the last function in the application calls stack in the crash stack trace.
-- `target_method` is the function signature where the last function in the application calls stack in the crash stack trace.
-- `target_line` is the line number of the crash point available in the crash stack trace.
+## Run Attribute-sensitive Reachability Analysis (ASRA)
+To perform ASRA, you can use the file [mole.jar](https://hkustconnect-my.sharepoint.com/:f:/g/personal/mamt_connect_ust_hk/EtUpYqtvhrtJnlPH_zwuGxcBG2muF2BS7rN49dYdw6h50Q?e=Fbimep). To start the analysis, a configuration file in `JSON` format is needed for the setup. This file contains information about the path to the Android platform, callback list, and API specification files. It also has the path to the target app and details about the crash point in the app's bytecode. 
 
 An example of a config file for the crash with issue ID 4707 in the AnkiDroid app is shown below:
+
 ````
 {
 	"android_setting": {
@@ -65,72 +65,88 @@ An example of a config file for the crash with issue ID 4707 in the AnkiDroid ap
   }
 
 ````
-To successfully run Mole, you must set the configuration file specifying:
-- `android-platform`: the path to different versions of android jar files.
-- `android_callback_list`: the path to the list of callback files for performing the static analysis with FlowDroid.
-- `callback_typestates`: the path to the file containing the list of setting/accessing API functions corresponding to attributes. 
-- `target_app`: the name of the target app used for analysis.
-- `target_package`: name of the package in the app where the crash is located.
-- `target_class`: name of the class where the crash point resides.
-- `target_method`: name of the method consisting of the crash point.
-- `taregt_line`: line of the statement containing the crash point.
-- `output_path`: path to the location for saving the output of ASRA.
 
-When the config file is set, one can use `java` to run the `mole.jar` to start the analysis given the config file and by setting the type of the analysis and callgraph construction algorithm as shown below:
+In this file,
+- `android_platform` is the path to Android platforms jar files. 
+- `android_callback_list` is the path of the file, including the set of callback functions in the Android framework (e.g., the file AndroidCallbacks.txt in FlowDroid).
+- `output_path` is the output folder.
+- `target_app` is the name of the target application to analyze. This file should be added under a folder named ./demo/IntervalAnalysis.  
+- `target_package` is the package of the application
+- `target_class` is the name of the class where the last function in the application calls stack in the crash stack trace.
+- `target_method` is the function signature where the last function in the application calls stack in the crash stack trace.
+- `target_line` is the line number of the crash point available in the crash stack trace.
+
+
+
+When the config file is prepared, you must save it under the same directory with `mole.jar`:
+ Mole
+       |
+       |--- mole.jar
+       |--- config.json
+       |--- output
+           | 
+
+Then, you can use `java` to run the `mole.jar` to start the analysis, giving the path to the config file, setting the type of the analysis and callgraph construction algorithm as shown below:
+
+
 ````
 java -jar mole.jar -f <config-file> -ca <callgraph algorithm> -type <baseline/reach/event> -t <callgraph construction timeout>
 ````
+
 Here,
-- `-f`: add the path where the config file is located.
-- `-ca`: add the desired callgraph construction algorithm in FlowDroid (CHA/SPARK/etc.). The default callgraph construction algorithm is SPARK.
-- `-type`: uses the type of analysis that can be any of the three:
-  - logging callbacks (baseline),
-  - performing reachability analysis (reach),
-  - performing attribute-sensitive reachability analysis (event)
+- `-f`: Add the path where the config file is located.
+- `—ca`: Add the desired callgraph construction algorithm in FlowDroid (CHA/SPARK/etc.). The default algorithm is SPARK.
+- `-type`: Add the type of scenarios for analysis that can be any of the three:
+  - baseline: no analysis,
+  - reach: performing reachability analysis,
+  - event: performing attribute-sensitive reachability analysis.
 - `-t`: add the timeout for callgraph construction performed by flowdroid.
 
-Consider that the `jar` file should be located in a folder where the config and output folders reside. When the analysis is finished, the instrumented `apk` file is saved under the folder `./output/instrument/`.
+> [!NOTE]
+> When the analysis is finished, the instrumented `apk` file is saved under the folder `./output/instrument/.`
 
 ## Fuzzing Tool Setup
-We used an Android emulator and installed the instrumented apk in it for the fuzzing process. We provide a docker file including,
-- android emulator
+We used an Android emulator with Android 7.1 and installed the instrumented apk in it to launch the fuzzing process. We provide a docker file setting up [Themis](https://github.com/the-themis-benchmarks/home), including
+- an Android emulator
 - a set of fuzzing tools (Monkey, Ape, Stoat, and FastBot2)
+  
 available in this [link](https://hkustconnect-my.sharepoint.com/:u:/g/personal/mamt_connect_ust_hk/Eeb9jDXM4iFDoh5OJIo2h94BDTz7Gg80ukKM4HNWMFQ19Q?e=gJWZu0).
-To start a fuzzing process with this docker, you can run `scripts/run-themis.sh` to create `n` instances of the docker.
-Before that, you have to locate the instrumented apks in the folder `` in the docker and save them by using the following commands:
+
+To start the fuzzing process with this docker, you first need to transfer the instrumented apk files into the docker:
+
+````
+docker run -it <docker-image-name>
+root@docker-id: cd home
+root@docker-id: mkdir apps
+root@docker-id: cd apps
+root@docker-id: scp host@domain:path-to-apk .
+root@docker-id: exit
+docker commit <docker-id> <docker-image-name>
+````
+
+Next, you can use `scripts/run-themis.sh` to create `n` instances of the docker.
 ````
 ./run-themis.sh <fuzzing-tool-name> <path-to-target-apps> <n>
 ````
 in which,
 - `fuzzing-tool-name` refers to the name of a fuzzing tool, which can be any of `monkey,` `ape,` `stoat,` or `fastbot2`.
-- `path-to-target-apps` is the path to the list of target apps' apk files to perform `n` fuzzing process for each simultaneously. 
+- `path-to-target-apps` is the path to the list of target apps' apk files to perform `n` fuzzing process for each simultaneously. Please note that, you have already added these files in the docker.
 - `n` is the number of fuzzing processes for each app in the target app directory.
 
-Please note that you must add the instrumented apk files in the docker beforehand. To do so, you need to run the docker:
-````
-docker run -it <docker-image-name>
-````
-and transfer the list of instrumented apk files to the docker with `scp`:
-````
-docker-image-name: scp host@domain:path-to-apk-list /home/Mole/apps/instrument-event/
-````
-Then, exit the docker and save the changes to it by running the following command:
-````
-docker commit <docker-id> <docker-image-name>
-````
+
 If you want to use other GUI fuzzing tools, you can check [Themis repository](https://github.com/the-themis-benchmarks/home) and modify the docker by adding other tools.
 
 
-## Output Result
-The output of each fuzzing tool is different, but we log all the exceptions and information about the type of the event (necessary/irrelevant) in a file called "logcat.log". In this file, each line indicates the time, start or end of the callback called, class, and callback name. Below is a sample and part of it: 
+## Crash Reproduction Result
+When the fuzzing process is finished, you can find the output under in the docker We log all the exceptions and information about the type of the event (necessary/irrelevant) in a file called "logcat.log." In this file, each line starts with the *time* and declares the *start* or *end* of a callback execution. It contains the name of the class and callback function. Below is a sample part of a log file we collect: 
 
 ````
-01-05 23:53:24.123  4858  4858 I <FUZZING>: start necessary: access$100 com.ichi2.anki.NavigationDrawerActivity232911772542
-01-05 23:53:24.123  4858  4858 I <FUZZING>: end necessary: access$100 com.ichi2.anki.NavigationDrawerActivity232911781812
-01-05 23:53:25.032  4858  4858 I <FUZZING>: start necessary: onNavigationItemSelected com.ichi2.anki.NavigationDrawerActivity233821038427
-01-05 23:53:25.032  4858  4858 I <FUZZING>: end necessary: onNavigationItemSelected com.ichi2.anki.NavigationDrawerActivity233821139310
-01-05 23:53:25.649  4858  4858 I <FUZZING>: start necessary: initNavigationDrawer com.ichi2.anki.NavigationDrawerActivity234437846617
-01-05 23:53:25.649  4858  4858 I <FUZZING>: end necessary: initNavigationDrawer com.ichi2.anki.NavigationDrawerActivity234437922208
+01-05 23:53:24.123  4858  4858 I <FUZZING>: start necessary: access$100 com.ichi2.anki.NavigationDrawerActivity
+01-05 23:53:24.123  4858  4858 I <FUZZING>: end necessary: access$100 com.ichi2.anki.NavigationDrawerActivity
+01-05 23:53:25.032  4858  4858 I <FUZZING>: start necessary: onNavigationItemSelected com.ichi2.anki.NavigationDrawerActivity
+01-05 23:53:25.032  4858  4858 I <FUZZING>: end necessary: onNavigationItemSelected com.ichi2.anki.NavigationDrawerActivity
+01-05 23:53:25.649  4858  4858 I <FUZZING>: start necessary: initNavigationDrawer com.ichi2.anki.NavigationDrawerActivity
+01-05 23:53:25.649  4858  4858 I <FUZZING>: end necessary: initNavigationDrawer com.ichi2.anki.NavigationDrawerActivity
 01-05 23:53:25.748  4858  4858 E ACRA    : ACRA caught a VerifyError for com.ichi2.anki
 01-05 23:53:25.748  4858  4858 E ACRA    : java.lang.VerifyError: Verifier rejected class com.ichi2.anki.Statistics$SectionsPagerAdapter: void com.ichi2.anki.Statistics$SectionsPagerAdapter.<init>(com.ichi2.anki.Statistics, android.support.v4.app.FragmentManager) failed to verify: void com.ichi2.anki.Statistics$SectionsPagerAdapter.<init>(com.ichi2.anki.Statistics, android.support.v4.app.FragmentManager): [0x3B] Constructor returning without calling superclass constructor (declaration of 'com.ichi2.anki.Statistics$SectionsPagerAdapter' appears in /data/app/com.ichi2.anki-1/base.apk)
 01-05 23:53:25.748  4858  4858 E ACRA    : 	at com.ichi2.anki.Statistics.onCollectionLoaded(Statistics.java)
@@ -150,6 +166,8 @@ The output of each fuzzing tool is different, but we log all the exceptions and 
 01-05 23:53:25.748  4858  4858 E ACRA    : 	at android.app.ActivityThread.main(ActivityThread.java:6119)
 01-05 23:53:25.748  4858  4858 E ACRA    : 	at java.lang.reflect.Method.invoke(Native Method)
 ````
+
+Apart from this file, each fuzzing tool collects information about the generated input events and models they construct (statically or dynamically). 
 
 Once the fuzzing is finished, the script `scripts/check.sh` can be used to search for a crash in the collected files. This script accepts the directory path where the folders of fuzzing outputs are stored. 
 ````
