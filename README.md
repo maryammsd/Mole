@@ -130,7 +130,7 @@ Next, you can use `scripts/run-themis.sh` to create `n` instances of the docker.
 ````
 in which,
 - `fuzzing-tool-name` refers to the name of a fuzzing tool, which can be any of `monkey,` `ape,` `stoat,` or `fastbot2`.
-- `path-to-target-apps` is the path to the list of target apps' apk files to perform `n` fuzzing process for each simultaneously. Please note that, you have already added these files in the docker.
+- `path-to-target-apps` is the path to the list of target apps' apk files to perform `n` fuzzing process for each simultaneously. Please note that you have already added these files to the docker.
 - `n` is the number of fuzzing processes for each app in the target app directory.
 
 
@@ -138,7 +138,7 @@ If you want to use other GUI fuzzing tools, you can check [Themis repository](ht
 
 
 ## Crash Reproduction Result
-When the fuzzing process is finished, you can find the output under in the docker We log all the exceptions and information about the type of the event (necessary/irrelevant) in a file called "logcat.log." In this file, each line starts with the *time* and declares the *start* or *end* of a callback execution. It contains the name of the class and callback function. Below is a sample part of a log file we collect: 
+When the fuzzing process is finished, you can find the output in the docker. We log all the exceptions and information about the type of the event (necessary/irrelevant) in a file called `logcat.log.` In this file, each line starts with the *time* and declares the *start* or *end* of a callback execution. It contains the name of the class and callback function. Below is a sample part of a log file we collect: 
 
 ````
 01-05 23:53:24.123  4858  4858 I <FUZZING>: start necessary: access$100 com.ichi2.anki.NavigationDrawerActivity
