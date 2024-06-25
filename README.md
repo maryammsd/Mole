@@ -146,7 +146,7 @@ If you want to use other GUI fuzzing tools, you can check [Themis repository](ht
 
 
 ## Crash Reproduction Result
-When the fuzzing process is finished, you can find the output in the docker under `/home/output/` folder. For each app, there is a directory named similar to the app file name. We log all the exceptions and information about the type of event (necessary/irrelevant) in a file called `logcat.log` under this folder. In this file, each line starts with the *time* and declares the *start* or *end* of a callback execution. It contains the name of the class and callback function. Below is a sample part of a log file we collect: 
+When the fuzzing process is finished, you can find the output in the docker under `/home/output/` folder. For each app, there is a directory named similar to the app file name. We log all the exceptions and trace the generated events by the fuzzing tools in a file called `logcat.log` under this folder. In this file, each line starts with the *time* and declares the *start* or *end* of a callback execution. It is also clarified in each line if an event is necessary or irrelevant. A necessary event is accepted and executed. An irrelevant event is pruned at runtime and is not executed by the app under test. Also, we log the name of the class and callback function corresponding to each event in each line. Below is a sample part of a log file we collect: 
 
 ````
 01-05 23:53:24.123  4858  4858 I <FUZZING>: start necessary: access$100 com.ichi2.anki.NavigationDrawerActivity
