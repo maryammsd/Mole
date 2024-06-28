@@ -184,12 +184,12 @@ where `/home/output/` consists of the directories of the results of the fuzzing 
 - `irrelevant.txt` contains a trace of irrelevant callbacks before the crash occurred.
 - `necessary.txt` consists of the necessary callbacks trace before the occurrence of the crash.
 
-We have made all the log files of our evaluation available in this [link](https://hkustconnect-my.sharepoint.com/:u:/g/personal/mamt_connect_ust_hk/EcaM0uwNAjRNtKaLtpFjnfYBiUym7EUaL_0aC20mj9dcyA?e=OSgDQT), which is around 280 GB after decompressing the zip file. **You can download and unzip this folder and use `check.sh` to replicate the results we collected in the evaluation process**. 
+We have made all the log files of our evaluation available in this [link](https://hkustconnect-my.sharepoint.com/:u:/g/personal/mamt_connect_ust_hk/EcaM0uwNAjRNtKaLtpFjnfYBiUym7EUaL_0aC20mj9dcyA?e=OSgDQT), which is around 280 GB after decompressing the zip file. **You can download and unzip this folder and use `check.sh` to replicate the results we collected in the evaluation process. For brevity, we added `replication-data.xlsx,` which contains all the data about success ratio, overhead, reproduction time, and statistical test results (Fisher exact and Wilcoxon Mann-Whittney).**. 
 
 ### Event Generated and GUI Models Constructed by Fuzzing Tools
 In addition to `logcat.log,` each fuzzing tool collects information about the generated input events and models it constructs (statically or dynamically). For instance, Monkey logs the coordination, generating an event with the event type in `monkey.log` for each app. For other fuzzing tools, please get more information from their repositories or websites available at [Ape](https://github.com/tianxiaogu/ape), [Stoat](https://tingsu.github.io/files/stoat.html), and [FastBot2](https://github.com/bytedance/Fastbot_Android).
 
-## Replication Package of Our Manuscript
+## Replication Package 
 We have used the 20 apps under the `apps` directory to evaluate our work. We tried to answer the following research questions:
 - **RQ1**: How effective is Mole in speeding up crash reproduction compared to the baseline fuzzing tools?
 - **RQ2**: How common are the widget dependencies imposed by collected widget attributes in Android applications?
@@ -197,13 +197,15 @@ We have used the 20 apps under the `apps` directory to evaluate our work. We tri
 - **RQ4**: How scalable is our proposed attribute-sensitive reachability analysis?
 - **RQ5**: What is the overhead imposed by Mole’s instrumentation at run time?
 
+We stored all the collected data for all the RQs except RQ3 in an Excel file named `replication-data.xlsx.` Below, we explain the related sheets in this file for each RQ separately.
+
 ### RQ1: Mole's Effectiveness in Crash Reproduction
 We used the success/failure in getting a crash reproduced and the crash reproduction time to show the effectiveness of ASRA. Below is Table 6, which provides this information in our manuscript:
 <p align="center">
 <img src="./figures/table-6.png" width=80% height=50%/>
 </p>
 
-For more detailed information about the execution time of every single run of the total ten runs, we provided the Excel file named `replication-data.xlsx.` In this file,  we have used the four sheets named `Monkey (RA/ASRA/Mole),` `Ape (RA/ASRA/Mole),` `Stoat (RA/ASRA/Mole),` and `FastBot2 (RA/ASRA/Mole)` to store all the data of 
+For more detailed information about the execution time of every single run of the total ten runs, we have used the four sheets named `Monkey (RA/ASRA/Mole),` `Ape (RA/ASRA/Mole),` `Stoat (RA/ASRA/Mole),` and `FastBot2 (RA/ASRA/Mole)` to store all the data of 
 - execution time for each single run (e,g, under columns with format *#number*)
 - average, median, maximum, and minimum execution time of all the ten runs in hours.
 - success ratio.
@@ -224,13 +226,13 @@ We provided detailed data about found attributes for each crash by our proposed 
 </div>
 
 ### RQ3: Static Analysis False Positives and Dynamic Analysis False Negatives:
-We provided raw data in Table 7 in our manuscript and discussed the results under section 5.6. 
+For this part, we provided all the raw data in Table 7 in our manuscript and discussed the results under section 5.6. 
 <div align="center">
 <img  width=50% src="./figures/table-7.png"/>
 </div>
 
 ### RQ5: Overhead of the Instrumentation and Fuzzing Tools' Event Generation:
-We used two measurements of generated event rates by a fuzzing tool (event<sub>g</sub>) and the respondent event rates by an app (event<sub>r</sub>) to assess the effect of our instrumentation overhead in the event generation process. We provided the average result of event<sub>g</sub> and event<sub>r</sub> in Tables 8 and 9 in our manuscript. Please note that the values entered in the below table are rounded. We provided the event generation and respondent time for each run in milliseconds under the sheet `Event-rate` sheet in the Excel file `replication-data.xlsx.`. We also measured the average overhead imposed for each crash separately by dividing event<sub>g</sub> by event<sub>r</sub> in this sheet.   
+We used two measurements of generated event rates by a fuzzing tool (event<sub>g</sub>) and the respondent event rates by an app (event<sub>r</sub>) to assess the effect of our instrumentation overhead in the event generation process. We provided the average result of event<sub>g</sub> and event<sub>r</sub> in Tables 8 and 9 in our manuscript. Please note that the values entered in the below table are rounded. We provided the average value for the event generation and respondent time for each run in milliseconds under the sheet `Event-rate` sheet in the Excel file `replication-data.xlsx.`. We also measured the average overhead imposed for each crash separately by dividing event<sub>g</sub> by event<sub>r</sub> in this sheet.   
 
 <div align="center">
 <img  width=50% src="./figures/table-8.png"/>
