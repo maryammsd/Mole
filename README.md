@@ -43,7 +43,7 @@ To set Mole, you need to
 - download the [Android platforms](https://github.com/Sable/android-platforms). 
 
 ## Run Attribute-sensitive Reachability Analysis (ASRA)
-To perform ASRA, you can use the file [mole.jar](https://hkustconnect-my.sharepoint.com/:f:/g/personal/mamt_connect_ust_hk/EtUpYqtvhrtJnlPH_zwuGxcBG2muF2BS7rN49dYdw6h50Q?e=Fbimep). To start the analysis, a configuration file in `JSON` format is needed for the setup. This file contains information about the path to the Android platform, callback list, and API specification files. It also has the path to the target app and details about the crash point in the app's bytecode. 
+To perform ASRA, you can use the file [mole.jar](https://hkustconnect-my.sharepoint.com/:f:/g/personal/mamt_connect_ust_hk/EtUpYqtvhrtJnlPH_zwuGxcBG2muF2BS7rN49dYdw6h50Q?e=Fbimep). We also have added the source code under the folder `src/`. To start the analysis, a configuration file in `JSON` format is needed for the setup. This file contains information about the path to the Android platform, callback list, and API specification files. It also has the path to the target app and details about the crash point in the app's bytecode. 
 
 An example of a config file for the crash with issue ID 4707 in the AnkiDroid app is shown below:
 
