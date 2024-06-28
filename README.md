@@ -187,5 +187,37 @@ where `/home/output/` consists of the directories of the results of the fuzzing 
 We have made available all the log files of our evaluation in this [link](https://hkustconnect-my.sharepoint.com/:u:/g/personal/mamt_connect_ust_hk/EcaM0uwNAjRNtKaLtpFjnfYBiUym7EUaL_0aC20mj9dcyA?e=OSgDQT), which is around 280 GB after decompressing the zip file. 
 
 ### Event Generated and GUI Models Constructed by Fuzzing Tools
-In addition to `logcat.log`, each fuzzing tool collects information about the generated input events and models it constructs (statically or dynamically). For instance, Monkey logs the coordination, generating an event with the event type in `monkey.log` for each app. For other fuzzing tools, please get more information from their repositories or websites available at [Ape](https://github.com/tianxiaogu/ape), [Stoat](https://tingsu.github.io/files/stoat.html), and [FastBot2](https://github.com/bytedance/Fastbot_Android).
+In addition to `logcat.log,` each fuzzing tool collects information about the generated input events and models it constructs (statically or dynamically). For instance, Monkey logs the coordination, generating an event with the event type in `monkey.log` for each app. For other fuzzing tools, please get more information from their repositories or websites available at [Ape](https://github.com/tianxiaogu/ape), [Stoat](https://tingsu.github.io/files/stoat.html), and [FastBot2](https://github.com/bytedance/Fastbot_Android).
 
+
+### Event Generated and GUI Models Constructed by Fuzzing Tools
+In addition to `logcat.log,` each fuzzing tool collects information about the generated input events and models it constructs (statically or dynamically). For instance, Monkey logs the coordination, generating an event with the event type in `monkey.log` for each app. For other fuzzing tools, please get more information from their repositories or websites available at [Ape](https://github.com/tianxiaogu/ape), [Stoat](https://tingsu.github.io/files/stoat.html), and [FastBot2](https://github.com/bytedance/Fastbot_Android).
+
+## Replication Data of our manuscript
+We have used the 20 apps under the `apps` directory to evaluate our work. We tried to answer the following research questions:
+- **RQ1**: How effective is Mole in speeding up crash reproduction compared to the baseline fuzzing tools?
+• **RQ2**: How common are the widget dependencies imposed by collected widget attributes in Android applications?
+• **RQ3**: What is the accuracy of Mole in statically and dynamically detecting the reachable paths to the crash point?
+• **RQ4**: How scalable is our proposed attribute-sensitive reachability analysis?
+• **RQ5**: What is the overhead imposed by Mole’s instrumentation at run time?
+
+### RQ1: Mole's Effectiveness in Crash Reproduction
+We used the success/failure in getting a crash reproduced and the crash reproduction time to show the effectiveness of ASRA. Below is the table that provides this information in our manuscript:
+
+
+For more detailed information about the execution time of every single run out of ten runs, we provide the Excel file named `replication-data.xlsx.` In this file,  we have used the tabes of `Monkey (RA/ASRA/Mole),` `Ape (RA/ASRA/Mole),` `Stoat (RA/ASRA/Mole),` and `FastBot2 (RA/ASRA/Mole)` contains all the data of 
+- execution time for each single run 
+- average, median, maximum, and minimum execution time of all the ten runs
+- success ratio
+- Fisher exact statistical test
+- Wilcoxon-Whitney-Mann statistical test results under p-value and Valgra Delany
+  
+in baseline, RA, and ASRA scenarios. You can reuse the formulas used in the Excel file to calculate the
+- success ration
+- p-value in both Fisher exact and Wilcoxon-Whitney-Mann tests.
+- Vargha Delaney in Wilcoxon-Whitney-Mann test.
+
+### RQ2 and RQ4: Attribute-Sensitive Reachability Analysis Results:
+
+### RQ5: Overhead of the Instrumentation and Fuzzing Tools' Event Generation
+We used . 
