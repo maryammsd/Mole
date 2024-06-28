@@ -183,6 +183,7 @@ where `/home/output/` consists of the directories of the results of the fuzzing 
 - `found.log` has a trace of all the callbacks before the crash.
 - `irrelevant.txt` contains a trace of irrelevant callbacks before the crash occurred.
 - `necessary.txt` consists of the necessary callbacks trace before the occurrence of the crash.
+- `basename.txt` contains the minimum, maximum, and median values for the instrumentation overhead of necessary and irrelevant callback executions in nanoseconds. 
 
 We have made all the log files of our evaluation available in this [link](https://hkustconnect-my.sharepoint.com/:u:/g/personal/mamt_connect_ust_hk/EcaM0uwNAjRNtKaLtpFjnfYBiUym7EUaL_0aC20mj9dcyA?e=OSgDQT), which is around 280 GB after decompressing the zip file. **You can download and unzip this folder and use `check.sh` to replicate the results we collected in the evaluation process. For brevity, we added `replication-data.xlsx,` which contains all the data about success ratio, overhead, reproduction time, and statistical test results (Fisher exact and Wilcoxon Mann-Whittney).**. 
 
