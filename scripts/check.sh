@@ -153,7 +153,7 @@ check_event_rate(){
 	echo "necessary: " >> "$directory""basename.txt"
 	echo "Min: " $necessarymin "  Max: " $necessarymax "Median: " $necessarymedian #>> "$directory""basename.txt"
 	cat "$directory""necessary.txt"  | grep -v "1$" | awk -F ', '  '{   sum=sum+$1 ; sumX2+=(($1)^2)} END { printf "Average: %f. Standard Deviation: %f \n", sum/NR, sqrt(sumX2/(NR) - ((sum/NR)^2) )}' #>> "$directory""basename.txt"
-	echo "irrelevant Events: " #>> "$directory""basename.txt"
+	echo "irrelevant Events: " >> "$directory""basename.txt"
 	if [[ -z $irrelevantmin ]];then
 		irrelevantmin=0
 	fi
@@ -169,8 +169,8 @@ check_event_rate(){
 			cat "$directory""irrelevant.txt"  | grep -v "1$" | awk -F ', '  '{   sum=sum+$1 ; sumX2+=(($1)^2)} END { printf "Average: %f. Standard Deviation: %f \n", sum/NR, sqrt(sumX2/(NR) - ((sum/NR)^2) )}' #>> "$directory""basename.txt"
 		fi
 	fi
-	#rm "$directory""temp2.txt"
-	#rm "$directory""temp1.txt"
+	rm "$directory""temp2.txt"
+	rm "$directory""temp1.txt"
 	#rm "$directory""necessary.txt"
 	#rm "$directory""irrelevant.txt"
 }
@@ -184,7 +184,7 @@ get_crash_log() {
 	echo "[key] $key"
 	# Check whether the crash stack trace with this issue id for this app exists in the array
 	if [[ -v keyarray["$key"] ]]; then
-		echo "[Process] let's looks for the crash in the log file."
+		echo "[Process] let's look for the crash in the log file."
 		value=("${keyarray["$key"]}")
 		IFS='|' read -ra stacktrace <<< "$value"
   		#for element in "${stacktrace[@]}"; do
@@ -240,11 +240,11 @@ get_crash_log() {
 }
 
 
-# (2) Does the target  directory have subdirectories ?
+# (2) Does the target  directory have subdirectories?
 if [ -d $targetDir ]; then
   echo "[Test Setting] target directory exists"
 else 
-  echo "[Test Setting] target directory doesn't exist"
+  echo "[Test Setting] target directory doesn't exist."
   exit -1
 fi
 
